@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--在 service 中 注入 dao
+        在 dao 中 注入 jdbcTemplate 模版
+        在 jdbcTemplate 中 注入 dataSource
+    -->
+
+    <!--配置 c3p0 中的 连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--注入属性值-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql:///hibernate_day01"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="root"></property>
+    </bean>
+
+
+    <!-- 第一步配置事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--注入 dataSource 表示 事务管理器 要指定对哪个数据库做操作-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 第二步配置事务增强-->
+    <tx:advice id="txadvice" transaction-manager="transactionManager">
+        <!--做事务操作-->
+        <tx:attributes>
+            <!-- 设置进行事务操作的方法匹配规则-->
+            <tx:method name="account*" />
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 第三步 配置切面 -->
+    <aop:config>
+        <!-- 切入点 -->
+        <aop:pointcut expression="execution(* cn.OrdersService.*(..))" id="pointcut1"></aop:pointcut>
+        <!--切面 (把哪个增强用在哪个切入点上)-->
+        <aop:advisor advice-ref="txadvice" pointcut-ref="pointcut1"></aop:advisor>
+
+
+    </aop:config>
+
+
+    <bean id="ordersService" class="cn.OrdersService">
+        <property name="ordersDao" ref="ordersDao"></property>
+    </bean>
+
+    <bean id="ordersDao" class="cn.OrdersDao">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+
+
+</beans>
+
+
+
+
+
+
+
+

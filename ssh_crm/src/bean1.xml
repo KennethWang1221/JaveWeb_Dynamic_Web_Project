@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--struts2 和 Spring 整合 其实就是 把 struts.xml 配置文件中的
+        action 在 Spring 中进行配置
+    -->
+    <bean id="linkManAction" class="cn.itcast.action.LinkManAction" scope="prototype">
+        <!--action 中 注入 service-->
+        <property name="userService" ref="userService"></property>
+    </bean>
+
+    <!--service 对象-->
+    <bean id="userService" class="cn.itcast.service.UserService">
+        <!--service 中 注入 dao-->
+        <property name="userDao" ref="userDaoImpl"></property>
+    </bean>
+
+    <!--dao对象 class 路径里边写的是 实现类 中的 ，因为 接口不能new 对象-->
+    <bean id="userDaoImpl" class="cn.itcast.dao.UserDaoImpl">
+        <!--<property name="hibernateTemplate" ref="hibernateTemplate"></property>-->
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+    <!--hibernateTemplate 模版对象-->
+    <!--<bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>-->
+
+    <import resource="classpath:Customer.xml"></import>
+    <import resource="classpath:linkman.xml"></import>
+    <import resource="classpath:visit.xml"></import>
+
+
+
+
+    <!-- hibernate 和 Spring 整合 -->
+    <!--1 配置c3p0连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--注入属性值-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql:///ssh_crm"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="root"></property>
+    </bean>
+
+
+
+    <!--2 sessionFactory-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocations" value="classpath:hibernate.cfg.xml"></property>
+
+    </bean>
+
+    <!--事务管理-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    <!--开启事务注解-->
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+
+</beans>
+
+
+
+
+
+
+
+

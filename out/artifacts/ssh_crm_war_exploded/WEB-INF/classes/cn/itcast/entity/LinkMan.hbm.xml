@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!-- 每个实体类 都要 对应一个 映射文件
+
+        1 配置类 和 表 对应
+          class 标签
+          name属性 实体类全路径
+          table 属性 数据库表名称
+    -->
+    <class name="cn.itcast.entity.LinkMan" table="table_linkman">
+        <id name="linkid" column="linkid">
+            <generator class="native"></generator>
+        </id>
+
+        <property name="linkName" column="linkName"> </property>
+        <property name="lkmGender" column="lkmGender"></property>
+        <property name="lkmPhone"  column="lkmPhone"></property>
+        <property name="lkmMobile"  column="lkmMobile"></property>
+
+        <!--联系人所属客户-->
+        <many-to-one name="customer" class="cn.itcast.entity.Customer" column="clid" lazy="false"></many-to-one>
+
+    </class>
+</hibernate-mapping>
+
+
+
+
+

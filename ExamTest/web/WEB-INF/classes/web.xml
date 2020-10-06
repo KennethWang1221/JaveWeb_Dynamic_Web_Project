@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+    <!--<servlet>-->
+        <!--<servlet-name>CookieTest1</servlet-name>-->
+        <!--<servlet-class>CookieTest1.CookieTest1</servlet-class>-->
+    <!--</servlet>-->
+
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>CookieTest1</servlet-name>-->
+        <!--<url-pattern>/CookieTest1</url-pattern>-->
+    <!--</servlet-mapping>-->
+    <servlet>
+        <servlet-name>ServletContextTest1</servlet-name>
+        <servlet-class>ServletTest.ServletContextTest1</servlet-class>
+
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+    </servlet>
+
+
+    <servlet-mapping>
+        <servlet-name>ServletContextTest1</servlet-name>
+        <url-pattern>/ServletContextTest1</url-pattern>
+    </servlet-mapping>
+
+    <context-param>
+        <param-name>学校</param-name>
+        <param-value>xian wenli university</param-value>
+    </context-param>
+
+
+
+
+    <servlet>
+        <servlet-name>SessionTest4</servlet-name>
+        <servlet-class>SessionTest1.SessionTest4</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SessionTest4</servlet-name>
+        <url-pattern>/SessionTest4</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SessionTest5</servlet-name>
+        <servlet-class>SessionTest1.SessionTest5</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SessionTest5</servlet-name>
+        <url-pattern>/SessionTest5</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>SessionTest1.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

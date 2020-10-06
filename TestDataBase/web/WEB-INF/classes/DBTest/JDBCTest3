@@ -1,0 +1,663 @@
+/*
+package DBTest;
+
+import java.sql.*;
+import java.util.*;
+
+
+public class JDBCTest3{
+    Connection conn=null;
+    Statement stmt=null;
+    ResultSet rs=null;
+    PreparedStatement pstmt=null;
+
+    String DBDriver="com.mysql.jdbc.Driver";
+    String dburl="jdbc:mysql://127.0.0.1:3306/logintest";
+    String usn="root";
+    String psd="root";
+
+    public Connection getConn(){
+        try{
+            Class.forName(DBDriver);
+            conn=DriverManager.getConnection(dburl,usn,psd);
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+    public int addParam(String name,String password,String age){
+        int res=0;
+        conn=this.getConn();
+        try{
+            String sql="insert into users(name,password,age)"+
+                    "values('"+name+"','"+password+"','"+age+"')";
+            stmt=conn.createStatement();
+
+
+            res=stmt.executeUpdate(sql);
+
+            if(res!=0){
+                System.out.println("添加用户成功");
+            }else{
+                System.out.println("添加用户失败");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+    public int addUsers(UsersTest3 user){
+        int res=0;
+        conn=this.getConn();
+        String sql="insert into users(name,password,age)"+
+                "values(?,?,?)";
+        try{
+            pstmt=conn.prepareStatement(sql);
+
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+
+            res=pstmt.executeUpdate();
+
+            if(res!=0){
+                System.out.println("添加用户成功");
+            }else{
+                System.out.println("添加用户失败");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public int delUsers(int id){
+        int res=0;
+        conn=this.getConn();
+        try{
+            stmt=conn.createStatement();
+            String sql="delete from users where id="+id;
+
+            res=stmt.executeUpdate(sql);
+
+            if(res!=0){
+                System.out.println("删除用户成功");
+            }else{
+                System.out.println("删除用户失败");
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    public int modifyUsers(UsersTest3 user){
+        int res=0;
+        conn=this.getConn();
+        String sql="update users set name=?,password=?,age=? where id=?";
+        try{
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+            pstmt.setInt(4,user.getId());
+
+            res=pstmt.executeUpdate();
+
+            if(res!=0){
+                System.out.println("修改用户成功");
+            }else{
+                System.out.println("修改用户失败");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+    public int getCount(){
+        int res=0;
+        conn=this.getConn();
+        try{
+            stmt=conn.createStatement();
+            String sql="select Count(*) from users ";
+            rs=stmt.executeQuery(sql);
+
+            while(rs.next()){
+                res=rs.getInt(1);
+            }
+            System.out.println("总共有"+res+"个用户");
+
+            if(res!=0){
+                System.out.println("查询成功");
+            }else{
+                System.out.println("查询失败");
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+
+    public int selectId(int id ){
+        int res=0;
+        conn=this.getConn();
+        UsersTest3 user=new UsersTest3();
+        try{
+            stmt=conn.createStatement();
+            String sql="select * from users where id="+id;
+            rs=stmt.executeQuery(sql);
+            while(rs.next()){
+                user.setId(rs.getInt(1));
+                user.setName(rs.getString(2));
+                user.setPassword(rs.getString(3));
+                user.setAge(rs.getString(4));
+
+            }
+
+            System.out.println("用户ID："+user.getId()+" 用户名： "+user.getName()+"用户密码 "+user.getPassword()+"用户年龄："+user.getAge());
+
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+    public List selectAll(){
+        List li=new ArrayList();
+        conn=this.getConn();
+        try{
+            stmt=conn.createStatement();
+            String sql="select * from users ";
+            rs=stmt.executeQuery(sql);
+            while(rs.next()){
+                UsersTest3 user=new UsersTest3();
+                user.setId(rs.getInt(1));
+                user.setName(rs.getString(2));
+                user.setPassword(rs.getString(3));
+                user.setAge(rs.getString(4));
+                li.add(user);
+            }
+
+        }catch(SQLException e){
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+
+        return li;
+    }
+
+
+
+    public void close(){
+        if(rs!=null){
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(pstmt!=null){
+            try{
+                pstmt.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        if(stmt!=null){
+            try{
+                stmt.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+
+        if(conn!=null){
+            try{
+                conn.close();
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+    public static void main(String[] args){
+        List<UsersTest3> list=new ArrayList();
+        for(int i=0;i<list.size();i++){
+            System.out.println("第"+i+"个用户："+list.get(1).getId());
+            System.out.println("第"+i+"个用户："+list.get(2).getName());
+            System.out.println("第"+i+"个用户："+list.get(3).getPassword());
+            System.out.println("第"+i+"个用户："+list.get(4).getAge());
+        }
+    }
+}
+    
+    
+*/
+
+/*package DBTest;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JDBCTest3{
+    Connection conn=null;
+    Statement stmt=null;
+    PreparedStatement pstmt=null;
+    ResultSet rs=null;
+
+    String DBDriver="com.mysql.jdbc.Driver";
+    String dburl="jdbc:mysql://127.0.0.1:3306/logintest";
+    String usn="root";
+    String psd="root";
+
+    public Connection getConn(){
+        try {
+            Class.forName(DBDriver);
+            conn= DriverManager.getConnection(dburl,usn,psd);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+
+    public int addParam(String name,String password,String age){
+        int res=0;
+        conn=this.getConn();
+        try {
+            stmt=conn.createStatement();
+            String sql="insert into users(name,password,age)"+
+                    "values('"+name+"','"+password+"','"+age+"')";
+            res=stmt.executeUpdate(sql);
+
+            if(res!=0){
+                System.out.println("添加用户成功");
+
+            }else{
+                System.out.println("添加用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+    public int addUsers(UsersTest3 user ){
+        int res=0;
+        conn=this.getConn();
+        String sql="insert into users(name,password,age)"+
+                "values(?,?,?)";
+        try {
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+            res=pstmt.executeUpdate();
+
+            if(res!=0){
+                System.out.println("添加用户成功");
+            }else {
+                System.out.println("添加用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return res;
+    }
+
+    public int deleUser(int id){
+        int res=0;
+        conn=this.getConn();
+        try {
+            String sql="delete from users where id="+id;
+            stmt=conn.createStatement();
+
+            res=stmt.executeUpdate(sql);
+            if(res!=0){
+                System.out.println("删除用户成功");
+            }else{
+                System.out.println("删除用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+
+        return res;
+    }
+
+    public int modifyUser(UsersTest3 user){
+        int res=0;
+        conn=this.getConn();
+        String sql="update users set name=?,password=?,age=? where id=?";
+        try {
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+            pstmt.setInt(4,user.getId());
+
+            res=pstmt.executeUpdate();
+            if(res!=0){
+                System.out.println("修改用户成功");
+            }else{
+                System.out.println("修改用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+
+        return res;
+    }
+
+
+    public int getCount(int id){
+        int res=0;
+        conn=this.getConn();
+        try {
+            stmt=conn.createStatement();
+            String sql="select Count(*) from users where id="+id;
+            rs=stmt.executeQuery(sql);
+            while(rs.next()){
+                res=rs.getInt(1);
+            }
+            System.out.println("总共有"+res+"个用户");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+
+        return res;
+    }
+
+    public int selectId(int id){
+        int res=0;
+        UsersTest3 user=new UsersTest3();
+        conn=this.getConn();
+        try {
+            stmt=conn.createStatement();
+            String sql="select * from users where id="+id;
+            rs=stmt.executeQuery(sql);
+            while(rs.next()){
+                user.setId(rs.getInt(1));
+                user.setName(rs.getString(2));
+                user.setPassword(rs.getString(3));
+                user.setAge(rs.getString(4));
+
+
+            }
+            System.out.println("用户ID"+user.getId()+"用户姓名"+user.getName()+
+                    "用户密码"+user.getPassword()+"用户年龄"+user.getAge());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+
+        return res;
+    }
+
+    public List selectUser(){
+        List li =new ArrayList();
+        conn=this.getConn();
+        try {
+            stmt=conn.createStatement();
+            String sql="select * from users";
+            rs=stmt.executeQuery(sql);
+            while(rs.next()){
+                UsersTest3 user=new UsersTest3();
+                user.setId(rs.getInt(1));
+                user.setName(rs.getString(2));
+                user.setPassword(rs.getString(3));
+                user.setAge(rs.getString(4));
+                li.add(user);
+                System.out.println("用户ID"+user.getId()+" 用户姓名"+user.getName()+
+                        " 用户密码"+user.getPassword()+" 用户年龄"+user.getAge());
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            this.close();
+        }
+        return li;
+    }
+
+    public void close(){
+        if(rs!=null){
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(pstmt!=null){
+            try {
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(stmt!=null){
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(conn!=null){
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+package DBTest;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class JDBCTest3{
+    Connection conn =null;
+    Statement stmt=null;
+    PreparedStatement pstmt=null;
+    ResultSet rs=null;
+
+    String DBDriver ="com.mysql.jdbc.Driver";
+    String dburl ="jdbc:mysql://127.0.0.1:3306/logintest";
+    String usn="root";
+    String psd="root";
+
+
+    public Connection getConn(){
+        try {
+            Class.forName(DBDriver);
+            conn= DriverManager.getConnection(dburl,usn,psd);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return conn;
+
+    }
+
+    public int addParam(String name,String password,String age){
+        int res=0;
+        conn=this.getConn();
+
+        try {
+            stmt=conn.createStatement();
+            String sql="insert into users(name,password,age)"+
+                    "values('"+name+"','"+password+"','"+age+"')";
+
+            res =stmt.executeUpdate(sql);
+
+            if(res!=0){
+                System.out.println("添加用户成功");
+
+            }else{
+                System.out.println("添加用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return res;
+    }
+
+
+    public int addUsers(UsersTest3 user){
+        int res=0;
+        conn=this.getConn();
+        String sql="insert into users(name,password,age)"+
+                "values(?,?,?)";
+
+        try {
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+            res=pstmt.executeUpdate();
+
+
+            if(res!=0){
+                System.out.println(添加用户成功);
+            }else{
+                System.out.println(添加用户失败);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            this.close();
+        }
+        return res;
+    }
+
+    public int delUser(int id){
+        int res=0;
+        conn=this.getConn();
+        String sql="delete from users where id="+id;
+        try {
+            stmt = conn .createStatement();
+            res=stmt.executeUpdate(sql);
+
+            if(res!=0){
+                System.out.println("删除用户成功");
+            }else{
+                System.out.println("删除用户失败");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally{
+            this.close();
+        }
+
+        return res;
+    }
+
+    public int modifyUser(UsersTest3 user){
+        int res=0;
+        conn=this.getConn();
+        String sql="update users set name=?,password=?,age=? where id=?";
+        try {
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,user.getName());
+            pstmt.setString(2,user.getPassword());
+            pstmt.setString(3,user.getAge());
+            pstmt.setInt(4,user.getId());
+
+            res=pstmt.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
+
+    public static void main(String args[]){
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

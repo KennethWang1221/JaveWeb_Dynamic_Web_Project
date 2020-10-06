@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!--
+        1 配置类 和 表 对应
+        class 标签
+        name 属性 实体类全路径
+        table 属性 数据库表名称
+    -->
+    <class name="cn.itcast.entity.Customer" table="table_customer">
+        <id name="cid" column="cid">
+            <generator class="native"></generator>
+        </id>
+        <property name="custName" column="custName"></property>
+        <property name="custLevel" column="custLevel"></property>
+        <property name="custSource"  column="custSource"></property>
+        <property name="custPhone"  column="custPhone"></property>
+        <property name="custMobile" column="custMobile"></property>
+
+        <!--表示客户所有联系人-->
+        <set name="setLinkMan" cascade="delete" inverse="true">
+            <key column="clid"></key>
+            <one-to-many class="cn.itcast.entity.LinkMan"></one-to-many>
+        </set>
+
+        <!--表示所有拜访记录-->
+        <set name="setCusVisit">
+            <key column="cvid"></key>
+            <one-to-many class="cn.itcast.entity.Visit"></one-to-many>
+        </set>
+
+        <!--所属级别-->
+        <many-to-one name="dictCustLevel" class="cn.itcast.entity.Dict" column="custlevel"></many-to-one>
+    </class>
+</hibernate-mapping>
+
+
+
+
+
+

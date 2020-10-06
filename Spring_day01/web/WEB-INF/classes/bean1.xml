@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+        <!-- ioc 入门
+            第一种 使用类的无参数构造创建（重点）-->
+        <bean id="user" class="cn.itcast.ioc.User"></bean>
+
+        <!--第二种 使用静态工厂创建 使用 静态工厂 创建对象 (若是无参构造 则需要在class 中写 bean2 的 路径 )
+                  根据 class 里边的属性值 Bean2Factory 这个类
+                  调用factory-method="getBean2" 中的getBean2 这个方法
+        -->
+        <bean id="bean2" class="cn.itcast.bean.Bean2Factory" factory-method="getBean2"></bean>
+
+        <!-- 第三种 使用实例工厂 创建对象-->
+        <!--因为不是第二种静态工厂，工厂类里边没有静态方法，所以不能向第二种一样使用类名，方法名-->
+        <!--先创建 工厂对象-->
+        <bean id="bean3Factory" class="cn.itcast.bean.Bean3Factory"></bean>
+        <bean id="bean3" factory-bean="bean3Factory" factory-method="getBean3"></bean>
+
+
+
+
+
+        <!--使用 有参数构造注入属性-->
+        <bean id="demo" class="cn.itcast.property.PropertyDemo1">
+                <!--使用有参构造注入-->
+                <constructor-arg name="username" value="小王小马"></constructor-arg>
+        </bean>
+
+        <!--使用 set方法注入属性-->
+        <bean id="book" class="cn.itcast.property.Book">
+                <!--注入属性值
+                    name 属性值 就是 类里面定义的属性名称
+                    value属性 ：就是 设置具体的值
+                -->
+                <property name="bookname" value="程序员宝典"></property>
+        </bean>
+
+        <!--******* 注入对象类型的属性 -->
+        <!-- 1 配置 service和dao 对象 因为 UserDao和UserService是两个类，这两个类的对象都要创建-->
+        <bean id="userDao" class="cn.itcast.ioc.UserDao"></bean>
+        <bean id="userService" class="cn.itcast.ioc.UserService">
+                <!--注入 dao 对象 现在不能写 value=""属性了 因为刚才是字符串，现在是对象
+                        name属性值：service类里面属性名称
+                        ref 属性 ：写要注入哪一个对象  写userdao配置bean标签中的id值
+                -->
+                <property name="userDao" ref="userDao" ></property>
+        </bean>
+
+
+        <!-- 注入复杂类型的属性值-->
+        <!--首先这个类的对象要先创建-->
+        <bean id="person" class="cn.itcast.property.Person">
+                <!-- 数组类型 -->
+                <!--若果注入普通的字符串 则可以写 value=""因为只有一个值
+                    但是这个是数组，可以存很多值
+                    所以要用<list></list>标签
+                    -->
+                <property name="arrs">
+                        <list>
+                                <value>小王</value>
+                                <value>小马</value>
+                                <value>小宋</value>
+                        </list>
+                </property>
+
+                <!--list 类型-->
+                <property name="list">
+                        <list>
+                                <value>小赵</value>
+                                <value>小钱</value>
+                                <value>小秦</value>
+                        </list>
+                </property>
+
+                <!-- map 类型-->
+                <property name="map">
+                        <map>
+                                <entry key="aa" value="lucy"></entry>
+                                <entry key="bb" value="mary"></entry>
+                                <entry key="cc" value="tom"></entry>
+                        </map>
+                </property>
+
+                <!-- properties类型-->
+                <property name="properties">
+                       <props>
+                               <prop key="diverclass">com.mysql.jdbc.Driver</prop>
+                               <prop key="username">root</prop>
+                       </props>
+                </property>
+        </bean>
+
+
+</beans>

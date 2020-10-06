@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <package name="demo1" extends="struts-default" namespace="/">
+        <!--全局结果页面配置-->
+        <!--<global-results>
+            <result name="success">hello.jsp</result>
+        </global-results>-->
+
+
+        <action name="book" class="cn.itcast.action.BookAction">
+            <!--局部结果页面配置-->
+            <!--<result name="success" type="dispatcher">world.jsp</result>-->
+            <result name="success" type="redirectAction">orders</result>
+        </action>
+        <action name="orders" class="cn.itcast.action.OdersAction">
+            <result name="success" type="dispatcher">hello.jsp</result>
+        </action>
+    </package>
+
+
+    <package name="demo2" extends="struts-default" namespace="/">
+        <action name="form1" class="cn.itcast.form.form1DemoAction"></action>
+        <action name="form2" class="cn.itcast.form.form2DemoAction"></action>
+        <action name="form3" class="cn.itcast.form.form3DemoAction"></action>
+        <action name="form4" class="cn.itcast.form.form4DemoAction"></action>
+
+        <action name="data1" class="cn.itcast.data.DataDemo1Action"></action>
+        <action name="data2" class="cn.itcast.data.DataDemo2Action"></action>
+        <action name="data3" class="cn.itcast.data.DataDemo3Action"></action>
+
+        <action name="list" class="cn.itcast.data.ListAction"></action>
+
+        <action name="map" class="cn.itcast.data.MapAction"></action>
+
+    </package>
+</struts>

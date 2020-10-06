@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <!--package 表示配置管理action对象的包
+        name="default" : 表示包名称，包名称在struts.xml 文件中是唯一的
+        namespace="/":表示访问action 模型的根路径为网站的根路径，例如此项目就是：/Struts2Start
+        extends ="struts-default":表示继承struts容器的struts-default.xml文档-->
+    <!--<package name="default" namespace="/" extends="struts-default">
+        &lt;!&ndash;
+                action 节点用于配置动作模型
+                name="action访问的路径"，例如:http://xxx.xxx.xxx:8080/Struts2Start/LoginAction.action
+                class="com.test1.action.LoginAction":表示对象模型的类型
+                method="":要执行的方法
+            &ndash;&gt;
+        <action name="Login" class="com.test1.action.LoginAction">
+            &lt;!&ndash;
+                result 表示结果节点
+                name="ok/fail"：表示执行方法返回的结果字符串值，根据此值，查找要转向的路径
+            &ndash;&gt;
+            <result name="success">/success.jsp</result>
+            <result name="login">/index.jsp</result>
+        </action>
+    </package>-->
+
+
+
+    <!--1 类似于代码包，区别不同的action，必须首先写package标签，在package里面才能配置action
+        2 package标签属性
+          （1）name 属性
+            -name属性值跟功能本身没有关系的
+            -在一个配置文件中可以写多个package标签，name属性值不能相同的
+          （2 extends属性
+            -属性值固定的，struts-default
+            -写了这个属性之后，在package里面配置的类才具有action功能
+          （3）namespace 属性
+            -namespace 属性值和action标签里面的name属性值构成访问路径
+        -->
+    <package name="default" namespace="/" extends="struts-default">
+        <!--
+        1 action 标签配置action访问路径
+        2 action标签属性
+            （1）name属性
+                -namespace 属性值和action属性值构成访问路径
+                -在package 标签里面可以写多个action标签，但是action的name属性值不能相同
+            （2）class属性
+                -action全路径
+            （3）method属性
+                -比如在action 里面默认执行的方法 execute方法，但是在action里面可以写其他的方法
+                -让action 里面多个方法执行，使用method 进行配置
+
+        -->
+        <action name="Login" class="com.test1.action.LoginAction" method="execute">
+            <!--
+              1 根据action的方法返回值，配置到不同的路径里面
+              2 result标签属性
+                （1）name属性
+                    -和方法返回值一样
+                （2）type 属性
+                    -配置如何到路径中（转发或者重定向）
+                    -type 属性默认值 是 做转发操作
+            -->
+            <result name="success">/success.jsp</result>
+            <result name="login">/index.jsp</result>
+        </action>
+
+        <!--访问action的方法
+        1 有三种方式实现
+        第一种 使用action标签的method属性，在这个属性里面写执行的action的方法
+        第二种 使用通配符方式实现
+        第三种 动态访问实现（不用）
+        -->
+        <!--有method属性，写要执行的action里面的方法的名称-->
+        <!--<action name="addAction" class="com.test1.action.TestAction" method="add"></action>-->
+        <!--执行update方法-->
+        <!--<action name="updateAction" class="com.test1.action.TestAction" method="update"></action>-->
+        <!--这样写有缺陷，action 每个方法都需要配置，如果action里面有多个方法，就需要配置很多的action-->
+
+        <!--第二种-->
+
+        <!--
+        1 在action标签里面name属性，name属性值里面写 符号* 星号
+        （1）* 理解：表示匹配任意内容
+            - 比如访问hello ， *可以匹配到
+            -比如访问add , *可以匹配到
+        -->
+        <action name="Test_*" class="com.test1.action.TestAction" method="{1}">
+            <allowed-methods>add,update</allowed-methods>
+        </action>
+    </package>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</struts>
